@@ -19,6 +19,21 @@ cd claude-code-deepseek-subagents
 npm link
 ```
 
+If `npm link` fails with `EACCES` because npm tries to write to `/usr/local`, use a user-writable prefix:
+
+```bash
+mkdir -p ~/.npm-global
+npm config set prefix ~/.npm-global
+export PATH="$HOME/.npm-global/bin:$PATH"
+npm link
+```
+
+Add this line to your shell profile if the command works:
+
+```bash
+export PATH="$HOME/.npm-global/bin:$PATH"
+```
+
 From any Claude Code project:
 
 ```bash
@@ -130,7 +145,7 @@ See [examples/manual-gateway.md](examples/manual-gateway.md) for the two-termina
 | Variable | Default | Purpose |
 | --- | --- | --- |
 | `DEEPSEEK_API_KEY` | required | DeepSeek API key used for subagent requests |
-| `DEEPSEEK_SUBAGENT_MODEL` | `deepseek-chat` | Model sent to DeepSeek |
+| `DEEPSEEK_SUBAGENT_MODEL` | `deepseek-v4-flash` | Model sent to DeepSeek |
 | `DEEPSEEK_ANTHROPIC_BASE_URL` | `https://api.deepseek.com/anthropic` | Anthropic-compatible DeepSeek endpoint |
 | `UPSTREAM_ANTHROPIC_BASE_URL` | `https://api.anthropic.com` | Upstream used for main Claude requests |
 | `UPSTREAM_ANTHROPIC_API_KEY` | unset | Optional Anthropic API key for main requests |
@@ -153,14 +168,16 @@ The gateway rewrites subagent requests after Claude Code sends them:
 
 ```text
 request model: haiku
-upstream model: deepseek-chat
+upstream model: deepseek-v4-flash
 ```
 
 You can change the DeepSeek model with:
 
 ```bash
-export DEEPSEEK_SUBAGENT_MODEL='deepseek-chat'
+export DEEPSEEK_SUBAGENT_MODEL='deepseek-v4-pro'
 ```
+
+Current DeepSeek API docs list `deepseek-v4-flash` and `deepseek-v4-pro` as the primary model names. Use `deepseek-v4-pro` if you want the higher capability model for subagents.
 
 ## Verify Routing
 
@@ -168,7 +185,7 @@ Check the gateway log:
 
 ```text
 [gateway] ... agent=main model=claude-sonnet... -> anthropic
-[gateway] ... agent=agt_... model=deepseek-chat -> deepseek
+[gateway] ... agent=agt_... model=deepseek-v4-flash -> deepseek
 ```
 
 Do not ask the subagent which model it is using. Claude Code still tells the subagent that the selected model is a Claude model; the HTTP request is rewritten only inside the gateway.

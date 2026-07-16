@@ -29,5 +29,5 @@ Watch terminal 1 to verify routing:
 
 ```text
 [gateway] ... agent=main model=claude-sonnet... -> anthropic
-[gateway] ... agent=agt_... model=deepseek-chat -> deepseek
+[gateway] ... agent=agt_... model=deepseek-v4-flash -> deepseek
 ```

@@ -13,11 +13,11 @@ Usage:
 
 Examples:
   DEEPSEEK_API_KEY=sk-... claude-deepseek --model sonnet
-  DEEPSEEK_SUBAGENT_MODEL=deepseek-chat claude-deepseek --model sonnet
+  DEEPSEEK_SUBAGENT_MODEL=deepseek-v4-pro claude-deepseek --model sonnet
 
 Environment:
   DEEPSEEK_API_KEY             required for subagents
-  DEEPSEEK_SUBAGENT_MODEL      default: deepseek-chat
+  DEEPSEEK_SUBAGENT_MODEL      default: deepseek-v4-flash
   PORT                         default: 8787
   HOST                         default: 127.0.0.1
   CLAUDE_DEEPSEEK_CLAUDE_BIN   default: claude`);

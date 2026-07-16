@@ -4,7 +4,7 @@ const DEFAULT_HOST = "127.0.0.1";
 const DEFAULT_PORT = 8787;
 const DEFAULT_ANTHROPIC_BASE_URL = "https://api.anthropic.com";
 const DEFAULT_DEEPSEEK_BASE_URL = "https://api.deepseek.com/anthropic";
-const DEFAULT_DEEPSEEK_MODEL = "deepseek-chat";
+const DEFAULT_DEEPSEEK_MODEL = "deepseek-v4-flash";
 const DEFAULT_CLAUDE_MODELS = [
   { id: "sonnet", display_name: "Claude Sonnet" },
   { id: "opus", display_name: "Claude Opus" },
@@ -45,6 +45,38 @@ function sendJson(res, statusCode, body) {
 
 function providerUrl(baseUrl, path) {
   return `${baseUrl.replace(/\/+$/, "")}${path}`;
+}
+
+function roughTokenEstimate(value) {
+  if (value == null) return 0;
+
+  if (typeof value === "string") {
+    return Math.max(1, Math.ceil(value.length / 4));
+  }
+
+  if (Array.isArray(value)) {
+    return value.reduce((total, item) => total + roughTokenEstimate(item), 0);
+  }
+
+  if (typeof value === "object") {
+    return Object.values(value).reduce(
+      (total, item) => total + roughTokenEstimate(item),
+      0,
+    );
+  }
+
+  return roughTokenEstimate(String(value));
+}
+
+function estimateCountTokens(body) {
+  const estimate = roughTokenEstimate({
+    system: body.system,
+    messages: body.messages,
+    tools: body.tools,
+    tool_choice: body.tool_choice,
+  });
+
+  return { input_tokens: Math.max(1, estimate) };
 }
 
 function parseClaudeModels(value) {
@@ -159,15 +191,15 @@ async function proxyRequest(req, res, config) {
     });
   }
 
-  if (req.method === "POST" && requestUrl.pathname === "/v1/messages/count_tokens") {
-    return sendJson(res, 404, {
-      error: "count_tokens is not implemented by this gateway",
-    });
-  }
+  const isMessagesRequest =
+    req.method === "POST" && requestUrl.pathname === "/v1/messages";
+  const isCountTokensRequest =
+    req.method === "POST" &&
+    requestUrl.pathname === "/v1/messages/count_tokens";
 
-  if (req.method !== "POST" || requestUrl.pathname !== "/v1/messages") {
+  if (!isMessagesRequest && !isCountTokensRequest) {
     return sendJson(res, 404, {
-      error: "only POST /v1/messages is implemented",
+      error: "only POST /v1/messages and /v1/messages/count_tokens are implemented",
     });
   }
 
@@ -186,6 +218,10 @@ async function proxyRequest(req, res, config) {
 
   if (provider.name === "deepseek") {
     body.model = config.deepseekModel;
+  }
+
+  if (isCountTokensRequest && provider.name === "deepseek") {
+    return sendJson(res, 200, estimateCountTokens(body));
   }
 
   const upstreamBody = Buffer.from(JSON.stringify(body));

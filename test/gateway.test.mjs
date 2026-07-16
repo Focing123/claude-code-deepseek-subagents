@@ -120,6 +120,39 @@ test("routes main requests to Anthropic and subagent requests to DeepSeek", asyn
   }
 });
 
+test("estimates count_tokens locally for DeepSeek subagent requests", async () => {
+  const { server } = createGateway({
+    deepseekApiKey: "deepseek-test-key",
+    deepseekModel: "deepseek-test-model",
+    log: () => {},
+  });
+  const address = await listen(server);
+  const gatewayUrl = `http://127.0.0.1:${address.port}`;
+
+  try {
+    const response = await fetch(`${gatewayUrl}/v1/messages/count_tokens`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": "main-key",
+        "x-claude-code-agent-id": "agent-1",
+      },
+      body: JSON.stringify({
+        model: "haiku",
+        system: "You are a reviewer.",
+        messages: [{ role: "user", content: "Review this project." }],
+      }),
+    });
+
+    assert.equal(response.status, 200);
+    const body = await response.json();
+    assert.equal(typeof body.input_tokens, "number");
+    assert.ok(body.input_tokens > 0);
+  } finally {
+    await close(server);
+  }
+});
+
 test("models endpoint returns configured Claude model aliases", async () => {
   const { server } = createGateway({
     claudeModels: [{ id: "custom-sonnet", display_name: "custom-sonnet" }],
