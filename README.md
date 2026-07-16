@@ -9,15 +9,23 @@ Claude Code subagent requests  -> DeepSeek API
 
 The routing rule is simple: Claude Code sends an `x-claude-code-agent-id` header for subagent requests. This gateway detects that header, sends the request to DeepSeek, and rewrites the model to `DEEPSEEK_SUBAGENT_MODEL`.
 
-## Quick Start
+## Quick Start From GitHub
+
+Use this before the package is published to npm:
+
+```bash
+git clone https://github.com/Focing123/claude-code-deepseek-subagents.git
+cd claude-code-deepseek-subagents
+npm link
+```
 
 From any Claude Code project:
 
 ```bash
-npx claude-code-deepseek-subagents init
+claude-deepseek-init
 
 export DEEPSEEK_API_KEY='sk-deepseek-...'
-npx claude-code-deepseek-subagents claude-deepseek --model sonnet
+claude-deepseek --model sonnet
 ```
 
 Then ask Claude Code:
@@ -28,26 +36,37 @@ Use the deepseek-reviewer agent to review this project.
 
 That is enough. The main conversation stays on Claude Code, while subagents are routed to DeepSeek.
 
+## Quick Start From npm
+
+Use this after the package is published to npm:
+
+```bash
+npm install -g claude-code-deepseek-subagents
+```
+
+From any Claude Code project:
+
+```bash
+claude-deepseek-init
+
+export DEEPSEEK_API_KEY='sk-deepseek-...'
+claude-deepseek --model sonnet
+```
+
+Or with `npx`:
+
+```bash
+npx claude-code-deepseek-subagents init
+
+export DEEPSEEK_API_KEY='sk-deepseek-...'
+npx claude-code-deepseek-subagents claude-deepseek --model sonnet
+```
+
 ## Install Globally
 
 ```bash
 npm install -g claude-code-deepseek-subagents
 
-claude-deepseek-init
-export DEEPSEEK_API_KEY='sk-deepseek-...'
-claude-deepseek --model sonnet
-```
-
-## Use From a Git Checkout
-
-Before the package is published to npm:
-
-```bash
-git clone https://github.com/your-name/claude-code-deepseek-subagents.git
-cd claude-code-deepseek-subagents
-npm link
-
-cd /path/to/your/claude-code-project
 claude-deepseek-init
 export DEEPSEEK_API_KEY='sk-deepseek-...'
 claude-deepseek --model sonnet
@@ -82,6 +101,14 @@ ANTHROPIC_BASE_URL=http://127.0.0.1:8787
 
 It also unsets API-token model overrides that commonly break Claude Code subscription login.
 
+If you use an Anthropic API key for the main Claude Code session instead of a Claude Code subscription login, set it as:
+
+```bash
+export UPSTREAM_ANTHROPIC_API_KEY='sk-ant-...'
+```
+
+Do not use `ANTHROPIC_API_KEY` for this mode; `claude-deepseek` clears it before starting Claude Code so subscription login keeps working by default.
+
 ### `claude-deepseek-gateway`
 
 Runs only the gateway.
@@ -109,6 +136,7 @@ See [examples/manual-gateway.md](examples/manual-gateway.md) for the two-termina
 | `UPSTREAM_ANTHROPIC_API_KEY` | unset | Optional Anthropic API key for main requests |
 | `HOST` | `127.0.0.1` | Gateway bind host |
 | `PORT` | `8787` | Gateway port |
+| `CLAUDE_MODELS` | `sonnet,opus,haiku` | Comma-separated aliases returned by `/v1/models` |
 | `CLAUDE_DEEPSEEK_CLAUDE_BIN` | `claude` | Claude Code binary |
 
 ## Why Agent Files Use `model: haiku`
@@ -186,7 +214,7 @@ claude --model sonnet
 
 ## Publish
 
-Update the repository URL in `package.json`, then:
+Before publishing to npm:
 
 ```bash
 npm run check

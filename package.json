@@ -20,7 +20,8 @@
   "scripts": {
     "start": "node bin/claude-deepseek-gateway.mjs",
     "init-agent": "node bin/claude-deepseek-init.mjs",
-    "check": "node --check bin/cli.mjs && node --check bin/claude-deepseek.mjs && node --check bin/claude-deepseek-gateway.mjs && node --check bin/claude-deepseek-init.mjs && node --check src/gateway.mjs"
+    "check": "node --check bin/cli.mjs && node --check bin/claude-deepseek.mjs && node --check bin/claude-deepseek-gateway.mjs && node --check bin/claude-deepseek-init.mjs && node --check src/gateway.mjs && npm test",
+    "test": "node --test"
   },
   "keywords": [
     "claude-code",

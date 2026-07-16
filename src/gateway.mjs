@@ -5,6 +5,11 @@ const DEFAULT_PORT = 8787;
 const DEFAULT_ANTHROPIC_BASE_URL = "https://api.anthropic.com";
 const DEFAULT_DEEPSEEK_BASE_URL = "https://api.deepseek.com/anthropic";
 const DEFAULT_DEEPSEEK_MODEL = "deepseek-chat";
+const DEFAULT_CLAUDE_MODELS = [
+  { id: "sonnet", display_name: "Claude Sonnet" },
+  { id: "opus", display_name: "Claude Opus" },
+  { id: "haiku", display_name: "Claude Haiku" },
+];
 
 const HOP_BY_HOP_HEADERS = new Set([
   "connection",
@@ -40,6 +45,16 @@ function sendJson(res, statusCode, body) {
 
 function providerUrl(baseUrl, path) {
   return `${baseUrl.replace(/\/+$/, "")}${path}`;
+}
+
+function parseClaudeModels(value) {
+  if (!value) return DEFAULT_CLAUDE_MODELS;
+
+  return value
+    .split(",")
+    .map((model) => model.trim())
+    .filter(Boolean)
+    .map((id) => ({ id, display_name: id }));
 }
 
 function hasValidGatewayAuth(req, token) {
@@ -99,6 +114,8 @@ function buildConfig(options = {}) {
       options.deepseekModel ||
       process.env.DEEPSEEK_SUBAGENT_MODEL ||
       DEFAULT_DEEPSEEK_MODEL,
+    claudeModels:
+      options.claudeModels || parseClaudeModels(process.env.CLAUDE_MODELS),
     log: options.log || console.error,
   };
 }
@@ -138,10 +155,7 @@ async function proxyRequest(req, res, config) {
 
   if (req.method === "GET" && requestUrl.pathname === "/v1/models") {
     return sendJson(res, 200, {
-      data: [
-        { id: "claude-sonnet-4-6", display_name: "Claude Sonnet" },
-        { id: "claude-opus-4-7", display_name: "Claude Opus" },
-      ],
+      data: config.claudeModels,
     });
   }
 
