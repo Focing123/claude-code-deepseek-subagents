@@ -1,6 +1,14 @@
 # Claude Code DeepSeek Subagents
 
-Run Claude Code normally while routing Claude Code subagents to DeepSeek through a small local Anthropic-compatible gateway.
+![Stars](https://img.shields.io/github/stars/Focing123/claude-code-deepseek-subagents)
+![License](https://img.shields.io/github/license/Focing123/claude-code-deepseek-subagents)
+
+**Run Claude as main orchestrator + DeepSeek as cheap and fast subagents** through a local Anthropic-compatible gateway.
+
+## Why?
+
+Claude Code is excellent as an orchestrator, but subagents get expensive fast.
+This tool lets you keep the best of both worlds: powerful main model + cheap and fast subagents.
 
 ```text
 main Claude Code requests      -> Anthropic / Claude Code login
