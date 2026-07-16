@@ -11,27 +11,19 @@ The routing rule is simple: Claude Code sends an `x-claude-code-agent-id` header
 
 ## Quick Start From GitHub
 
-Use this before the package is published to npm:
+Clone the repo and install the commands into your user directory:
 
 ```bash
 git clone https://github.com/Focing123/claude-code-deepseek-subagents.git
 cd claude-code-deepseek-subagents
-npm link
+mkdir -p ~/.local
+npm install -g . --prefix ~/.local
 ```
 
-If `npm link` fails with `EACCES` because npm tries to write to `/usr/local`, use a user-writable prefix:
+If `claude-deepseek` is not found after install, add `~/.local/bin` to your shell profile:
 
 ```bash
-mkdir -p ~/.npm-global
-npm config set prefix ~/.npm-global
-export PATH="$HOME/.npm-global/bin:$PATH"
-npm link
-```
-
-Add this line to your shell profile if the command works:
-
-```bash
-export PATH="$HOME/.npm-global/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 ```
 
 From any Claude Code project:
@@ -50,42 +42,6 @@ Use the deepseek-reviewer agent to review this project.
 ```
 
 That is enough. The main conversation stays on Claude Code, while subagents are routed to DeepSeek.
-
-## Quick Start From npm
-
-Use this after the package is published to npm:
-
-```bash
-npm install -g claude-code-deepseek-subagents
-```
-
-From any Claude Code project:
-
-```bash
-claude-deepseek-init
-
-export DEEPSEEK_API_KEY='sk-deepseek-...'
-claude-deepseek --model sonnet
-```
-
-Or with `npx`:
-
-```bash
-npx claude-code-deepseek-subagents init
-
-export DEEPSEEK_API_KEY='sk-deepseek-...'
-npx claude-code-deepseek-subagents claude-deepseek --model sonnet
-```
-
-## Install Globally
-
-```bash
-npm install -g claude-code-deepseek-subagents
-
-claude-deepseek-init
-export DEEPSEEK_API_KEY='sk-deepseek-...'
-claude-deepseek --model sonnet
-```
 
 ## Commands
 
@@ -130,12 +86,6 @@ Runs only the gateway.
 
 ```bash
 DEEPSEEK_API_KEY='sk-deepseek-...' claude-deepseek-gateway
-```
-
-With `npx`:
-
-```bash
-npx claude-code-deepseek-subagents gateway
 ```
 
 See [examples/manual-gateway.md](examples/manual-gateway.md) for the two-terminal setup.
@@ -227,14 +177,4 @@ unset ANTHROPIC_DEFAULT_SONNET_MODEL
 unset ANTHROPIC_DEFAULT_OPUS_MODEL
 
 claude --model sonnet
-```
-
-## Publish
-
-Before publishing to npm:
-
-```bash
-npm run check
-npm pack --dry-run
-npm publish --access public
 ```

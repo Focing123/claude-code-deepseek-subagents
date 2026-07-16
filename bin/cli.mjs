@@ -18,9 +18,9 @@ function printHelp() {
   console.log(`claude-code-deepseek-subagents
 
 Usage:
-  npx claude-code-deepseek-subagents init
-  npx claude-code-deepseek-subagents claude-deepseek --model sonnet
-  npx claude-code-deepseek-subagents gateway
+  claude-code-deepseek-subagents init
+  claude-code-deepseek-subagents claude-deepseek --model sonnet
+  claude-code-deepseek-subagents gateway
 
 Commands:
   init                     Install sample DeepSeek-routed Claude Code agents

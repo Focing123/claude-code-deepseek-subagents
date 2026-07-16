@@ -6,7 +6,7 @@ Terminal 1:
 
 ```bash
 export DEEPSEEK_API_KEY='sk-deepseek-...'
-npx claude-code-deepseek-subagents gateway
+claude-deepseek-gateway
 ```
 
 Terminal 2:
