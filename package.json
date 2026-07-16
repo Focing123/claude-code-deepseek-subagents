@@ -1,0 +1,42 @@
+{
+  "name": "claude-code-deepseek-subagents",
+  "version": "0.1.0",
+  "description": "Run Claude Code normally while routing subagents to DeepSeek through a local Anthropic-compatible gateway.",
+  "type": "module",
+  "bin": {
+    "claude-code-deepseek-subagents": "bin/cli.mjs",
+    "claude-deepseek": "bin/claude-deepseek.mjs",
+    "claude-deepseek-gateway": "bin/claude-deepseek-gateway.mjs",
+    "claude-deepseek-init": "bin/claude-deepseek-init.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "templates",
+    "examples",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "node bin/claude-deepseek-gateway.mjs",
+    "init-agent": "node bin/claude-deepseek-init.mjs",
+    "check": "node --check bin/cli.mjs && node --check bin/claude-deepseek.mjs && node --check bin/claude-deepseek-gateway.mjs && node --check bin/claude-deepseek-init.mjs && node --check src/gateway.mjs"
+  },
+  "keywords": [
+    "claude-code",
+    "deepseek",
+    "anthropic",
+    "subagents",
+    "gateway",
+    "agent"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.17"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-name/claude-code-deepseek-subagents.git"
+  }
+}
