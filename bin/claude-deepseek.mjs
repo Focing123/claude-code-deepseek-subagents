@@ -18,9 +18,13 @@ Examples:
 Environment:
   DEEPSEEK_API_KEY             required for subagents
   DEEPSEEK_SUBAGENT_MODEL      default: deepseek-v4-flash
+  CLAUDE_DEEPSEEK_GATEWAY_LOG  set to stderr to show gateway routing logs
   PORT                         default: 8787
   HOST                         default: 127.0.0.1
-  CLAUDE_DEEPSEEK_CLAUDE_BIN   default: claude`);
+  CLAUDE_DEEPSEEK_CLAUDE_BIN   default: claude
+
+Launcher options:
+  --gateway-debug              show gateway routing logs in this terminal`);
 }
 
 if (process.argv.includes("--help") || process.argv.includes("-h")) {
@@ -34,9 +38,17 @@ if (!process.env.DEEPSEEK_API_KEY) {
   process.exit(1);
 }
 
-const { server, config } = await startGateway();
+const rawArgs = process.argv.slice(2);
+const gatewayDebug =
+  rawArgs.includes("--gateway-debug") ||
+  ["1", "true", "yes", "debug", "stderr"].includes(
+    (process.env.CLAUDE_DEEPSEEK_GATEWAY_LOG || "").toLowerCase(),
+  );
+const claudeArgs = rawArgs.filter((arg) => arg !== "--gateway-debug");
+const gatewayLog = gatewayDebug ? console.error : () => {};
+
+const { server, config } = await startGateway({ log: gatewayLog });
 const claudeBin = process.env.CLAUDE_DEEPSEEK_CLAUDE_BIN || "claude";
-const claudeArgs = process.argv.slice(2);
 
 const childEnv = {
   ...process.env,

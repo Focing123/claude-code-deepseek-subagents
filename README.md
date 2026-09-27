@@ -51,6 +51,8 @@ Use the deepseek-reviewer agent to review this project.
 
 That is enough. The main conversation stays on Claude Code, while subagents are routed to DeepSeek.
 
+The embedded gateway is silent by default. Subagent routing logs no longer write over the Claude Code interface while you work.
+
 ## Commands
 
 ### `claude-deepseek-init`
@@ -107,6 +109,7 @@ See [examples/manual-gateway.md](examples/manual-gateway.md) for the two-termina
 | `DEEPSEEK_ANTHROPIC_BASE_URL` | `https://api.deepseek.com/anthropic` | Anthropic-compatible DeepSeek endpoint |
 | `UPSTREAM_ANTHROPIC_BASE_URL` | `https://api.anthropic.com` | Upstream used for main Claude requests |
 | `UPSTREAM_ANTHROPIC_API_KEY` | unset | Optional Anthropic API key for main requests |
+| `CLAUDE_DEEPSEEK_GATEWAY_LOG` | unset | Set to `stderr` to show routing logs in the Claude Code terminal |
 | `HOST` | `127.0.0.1` | Gateway bind host |
 | `PORT` | `8787` | Gateway port |
 | `CLAUDE_MODELS` | `sonnet,opus,haiku` | Comma-separated aliases returned by `/v1/models` |
@@ -139,7 +142,19 @@ Current DeepSeek API docs list `deepseek-v4-flash` and `deepseek-v4-pro` as the 
 
 ## Verify Routing
 
-Check the gateway log:
+The bundled launcher hides request logs by default so they do not corrupt Claude Code's interactive display. Enable them temporarily when troubleshooting:
+
+```bash
+claude-deepseek --gateway-debug --model sonnet
+```
+
+You can also enable them through the environment:
+
+```bash
+CLAUDE_DEEPSEEK_GATEWAY_LOG=stderr claude-deepseek --model sonnet
+```
+
+The gateway then prints:
 
 ```text
 [gateway] ... agent=main model=claude-sonnet... -> anthropic
@@ -147,6 +162,8 @@ Check the gateway log:
 ```
 
 Do not ask the subagent which model it is using. Claude Code still tells the subagent that the selected model is a Claude model; the HTTP request is rewritten only inside the gateway.
+
+When using `claude-deepseek-gateway` in a separate terminal, logs remain visible there because they cannot interfere with the Claude Code interface.
 
 ## Security Notes
 
